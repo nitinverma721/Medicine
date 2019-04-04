@@ -3,6 +3,12 @@
 <%@ taglib prefix="springform"
 	uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+ <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="springform"
+	uri="http://www.springframework.org/tags/form"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -14,7 +20,6 @@
 		var contact_number = document.getElementById("contact_number").value;
 		var email_id = document.getElementById("email_id").value;
 		var password = document.getElementById("password").value;
-
 		if (first_name == null || first_name == "")
 		{
 			alert("Please Enter First Name.");
@@ -49,7 +54,10 @@
 			alert("Please Enter Password.");
 			return false;
 		}
-		return true;
+		else
+			{
+			return CheckValidCaptcha(event);
+			}
 	}
 	
 	function onlyAlphabets(e, t) {
@@ -82,15 +90,46 @@
 	
 	function validateEmail(emailField){
         var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-
         if (reg.test(emailField.value) == false) 
         {
             alert('Invalid Email Address');
             return false;
         }
-
         return true;
 	}
+	
+	function generateCaptcha(event)
+	{
+	    var alpha = new Array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
+	    var i;
+	    
+	      var a = alpha[Math.floor(Math.random() * alpha.length)];
+	      var b = alpha[Math.floor(Math.random() * alpha.length)];
+	      var c = alpha[Math.floor(Math.random() * alpha.length)];
+	      var d = alpha[Math.floor(Math.random() * alpha.length)];
+	   
+	   var code = a + b  +  c  + d;
+	   document.getElementById("mainCaptcha").value = code;
+	   
+	 }
+	 function CheckValidCaptcha(event){
+	     var string1 = document.getElementById('mainCaptcha').value;
+	     var string2 = document.getElementById('txtInput').value;
+	     if (string1==string2){
+	document.getElementById('success').innerHTML = "Form is validated Successfully";
+	//alert("Form is validated Successfully");
+	  delay("1000");
+	       return true;
+	     }
+	     else{       
+	document.getElementById('error').innerHTML = "Please enter a valid captcha."; 
+	//alert("Please enter a valid captcha.");
+	 
+	       return false;
+
+	     }
+	     
+	 }
 </script>
 <style>
 body {
@@ -100,7 +139,6 @@ body {
 	-o-background-size: cover;
 	background-size: cover;
 }
-
 /* Control the right side */
 .right {
 	position: absolute;
@@ -110,23 +148,19 @@ body {
 	transform: scale(1.25, 1);
 	color: #2F4F4F;
 }
-
 img {
 	width: 200px;
 }
-
 option, select {
 	/* Whatever color  you want */
 	background-color: #2F4F4F;
 	color: white;
 }
-
-input[type=text], [type=date] {
+input[type=text], [type=date] ,[type=password] {
 	background-color: #2F4F4F;
 	color: white;
 }
-
-input[type=submit] {
+input[type=submit],[type=button] {
 	background-color: #2F4F4F;
 	border: none;
 	color: white;
@@ -138,7 +172,6 @@ input[type=submit] {
 	cursor: pointer;
 	border-radius: 16px;
 }
-
 .name {
 	color: #2F4F4F;
 	font-size: 60px;
@@ -150,25 +183,21 @@ input[type=submit] {
 	font-style: oblique;
 	font-weight: bold;
 }
-
 .register {
 	position: absolute;
-	bottom: 100px;
-	right: 420px;
+	bottom: 20px;
+	right: 300px;
 	text-align: right;
 	align: right;
 }
-
 .login:hover {
 	background-color: #3e8e41;
 }
-
 .login:active {
 	background-color: #3e8e41;
 	box-shadow: 0 5px #666;
 	transform: translateY(4px);
 }
-
 .login {
 	background-color: #2F4F4F;
 	border: none;
@@ -181,7 +210,6 @@ input[type=submit] {
 	cursor: pointer;
 	border-radius: 16px;
 }
-
 .form {
 	position: absolute;
 	margin: auto;
@@ -196,7 +224,7 @@ input[type=submit] {
 </style>
 <title>Registration Page</title>
 </head>
-<body>
+<body onload="generateCaptcha();">
 	<div class="name">Medicine Monitoring System</div>
 	<div class="form">
 		<springform:form modelAttribute="admin" method="post"
@@ -260,10 +288,28 @@ input[type=submit] {
 
 				<tr>
 					<td><springform:label path="adminPassword">Password :</springform:label>
-					<td><springform:input path="adminPassword"
+					<td><springform:input path="adminPassword" type="password"
 							placeholder="Password" id="password" style="height : 30px;"
 							maxlength="10" autocomplete="off" />
 				</tr>
+				
+				<tr>
+               <td>
+                  <input type="text" id="mainCaptcha" readonly="true" style="height : 30px;"/> 
+               <td>   <input type="button" id="refresh" value="Refresh" onclick=" return generateCaptcha(event);" />
+               
+            </tr>
+            <tr>
+               <td>
+                 Enter captcha:<td> <input type="text" id="txtInput" style="height : 30px;" autocomplete="off"/>    
+               
+            </tr>
+    <td><span id="error" style="color:red"></span></td>
+            </tr>
+            <tr>
+               <td><span id="success" style="color:green" delay="1000"></span></td>
+            </tr>
+            
 				<div class="register">
 					<input type="submit" value="register" onclick="return fn(event)">
 				</div>
