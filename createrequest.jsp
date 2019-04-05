@@ -8,7 +8,6 @@
 <script type="text/javascript">
 		function fn(event) {
 			var quantity_1 = document.getElementById("quantity_1").value;
-
 			if (quantity_1 == 0 || quantity_1 == "")
 			{
 				alert("Please Enter Valid Quantity.");
@@ -22,7 +21,6 @@
 			  var key = event.keyCode;
 			  return ((key >= 65 && key <= 90) || key == 8 || (key>=97 && key<=122) || key==32);
 			}
-
 			function numberOnly(event)
 			{
 				  var charCode = event.keyCode;
@@ -31,6 +29,17 @@
 			    }
 			    return true;
 			}
+
+			function getDate() {
+				var today = new Date();
+				var dd = String(today.getDate()).padStart(2, '0');
+				var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+				var yyyy = today.getFullYear();
+
+				today = mm + '/' + dd + '/' + yyyy;
+			
+						document.getElementById("datepicker").value = today;
+					}
 </script>
 <style>
 body {
@@ -40,7 +49,6 @@ body {
 	-o-background-size: cover;
 	background-size: cover;
 }
-
 /* Control the right side */
 .right {
 	position: absolute;
@@ -50,22 +58,18 @@ body {
 	transform: scale(1.25, 1);
 	color: #2F4F4F;
 }
-
 img {
 	width: 200px;
 }
-
 option, select {
 	/* Whatever color  you want */
 	background-color: #2F4F4F;
 	color: white;
 }
-
 input[type=text], [type=date] {
 	background-color: #2F4F4F;
 	color: white;
 }
-
 input[type=submit] {
 	background-color: #2F4F4F;
 	border: none;
@@ -78,7 +82,6 @@ input[type=submit] {
 	cursor: pointer;
 	border-radius: 16px;
 }
-
 .name {
 	color: #2F4F4F;
 	font-size: 60px;
@@ -90,25 +93,21 @@ input[type=submit] {
 	font-style: oblique;
 	font-weight: bold;
 }
-
-.register {
+.AddRequest{
 	position: absolute;
 	bottom: 75px;
 	right: 390px;
 	text-align: right;
 	align: right;
 }
-
 .login:hover {
 	background-color: #3e8e41;
 }
-
 .login:active {
 	background-color: #3e8e41;
 	box-shadow: 0 5px #666;
 	transform: translateY(4px);
 }
-
 .login {
 	background-color: #2F4F4F;
 	border: none;
@@ -121,7 +120,6 @@ input[type=submit] {
 	cursor: pointer;
 	border-radius: 16px;
 }
-
 .form {
 	position: absolute;
 	margin: auto;
@@ -137,7 +135,7 @@ input[type=submit] {
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Create Request</title>
 </head>
-<body>
+<body >
 	<div class="form">
 		<springform:form modelAttribute="medicinerequest" method="post"
 			action="createmedicinerequest.htm">
@@ -151,9 +149,9 @@ input[type=submit] {
 				</tr>
 				<tr>
 					<td><springform:label path="requestDate">Request Date :</springform:label>
-					<td><springform:input path="requestDate" id="dob" type="date"
-							placeholder="mm/dd/yyyy" style="height : 30px;"
-							autocomplete="off" />
+					<td><springform:input path="requestDate" id="datepicker"
+							style="height : 30px;"
+							autocomplete="off" onclick="return getDate()" readonly="true" />
 				</tr>
 				<td><springform:label path="medicine1Id">Medicine 1 Id :</springform:label>
 				<td><springform:select path="medicine1Id">
@@ -220,7 +218,7 @@ input[type=submit] {
 							autocomplete="off" maxlength="200"
 							onkeypress="return alphaOnly(event)"/>
 				</tr>
-				<div class="register">
+				<div class="AddRequest">
 				<input type="submit" value="Add Request" onclick="return fn(event)">
 				</div>
 				</form>
