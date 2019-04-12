@@ -45,14 +45,12 @@
 			return false;
 		}
 		else if (password == null || password == "")
-		{
+		{  
 			alert("Please Enter Password.");
 			return false;
 		}
-		else
-			{
-			return CheckValidCaptcha(event);
-			}
+		else 
+		return true;
 	}
 	
 	function onlyAlphabets(e, t) {
@@ -82,7 +80,6 @@
 	    }
 	    return true;
 	}
-	
 	function validateEmail(emailField){
         var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
         if (reg.test(emailField.value) == false) 
@@ -93,38 +90,39 @@
         return true;
 	}
 	
-	function generateCaptcha(event)
+	function validate(datefield)
 	{
-	    var alpha = new Array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
-	    var i;
-	    
-	      var a = alpha[Math.floor(Math.random() * alpha.length)];
-	      var b = alpha[Math.floor(Math.random() * alpha.length)];
-	      var c = alpha[Math.floor(Math.random() * alpha.length)];
-	      var d = alpha[Math.floor(Math.random() * alpha.length)];
-	   
-	   var code = a + b  +  c  + d;
-	   document.getElementById("mainCaptcha").value = code;
-	   
-	 }
-	 function CheckValidCaptcha(event){
-	     var string1 = document.getElementById('mainCaptcha').value;
-	     var string2 = document.getElementById('txtInput').value;
-	     if (string1==string2){
-	document.getElementById('success').innerHTML = "Form is validated Successfully";
-	//alert("Form is validated Successfully");
-	  delay("1000");
-	       return true;
-	     }
-	     else{       
-	document.getElementById('error').innerHTML = "Please enter a valid captcha."; 
-	//alert("Please enter a valid captcha.");
-	 
-	       return false;
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth()+1; //January is 0!
+		var yyyy = today.getFullYear();
+		 if(dd<10){
+		        dd='0'+dd
+		    } 
+		    if(mm<10){
+		        mm='0'+mm
+		    } 
 
-	     }
-	     
-	 }
+		today = yyyy+'-'+mm+'-'+dd;
+		document.getElementById("datefield").setAttribute("max", today);
+	}
+	function agecalculator(agecal)
+	{
+		var d=document.getElementById("datefield").value;
+		var a=d.substring(0,4);
+		var k=parseInt(a,10);
+		var today = new Date();
+		var yyyy = today.getFullYear();
+		var s=yyyy-k;
+		if(s<18)
+			{alert("Age less than 18 Not eligible to register");
+			 return false;
+			}
+		else
+		document.getElementById("agecal").value=s;
+		
+		return true;
+	}
 </script>
 <style>
 body {
@@ -163,7 +161,7 @@ input[type=submit],[type=button] {
 	text-align: center;
 	text-decoration: none;
 	display: inline-block;
-	margin: 4px 2px;
+	margin: 4px 2px;``
 	cursor: pointer;
 	border-radius: 16px;
 }
@@ -178,7 +176,7 @@ input[type=submit],[type=button] {
 	font-style: oblique;
 	font-weight: bold;
 }
-.register {
+.register1 {
 	position: absolute;
 	bottom: 20px;
 	right: 300px;
@@ -219,7 +217,7 @@ input[type=submit],[type=button] {
 </style>
 <title>Registration Page</title>
 </head>
-<body onload="generateCaptcha();">
+<body >
 	<div class="name">Medicine Monitoring System</div>
 	<div class="form">
 		<springform:form modelAttribute="admin" method="post"
@@ -240,12 +238,6 @@ input[type=submit],[type=button] {
 							onkeypress="return onlyAlphabets(event,this);" />
 				</tr>
 				<tr>
-					<td><springform:label path="adminAge">Age :</springform:label>
-					<td><springform:input path="adminAge" placeholder="Age"
-							maxlength="2" id="age" style="height : 30px;" autocomplete="off"
-							onkeypress="return isNumber(event)" />
-				</tr>
-				<tr>
 					<td><springform:label path="adminGender">Gender :</springform:label>
 						<td><springform:select path="adminGender" style="height : 30px;">
 							<springform:options items="${genderList}" />
@@ -254,9 +246,15 @@ input[type=submit],[type=button] {
 
 				<tr>
 					<td><springform:label path="adminDOB">Date of Birth :</springform:label>
-					<td><springform:input path="adminDOB" id="dob" type="date"
+					<td><springform:input path="adminDOB" id="datefield" type="date"
 							placeholder="mm/dd/yyyy" style="height : 30px;"
-							autocomplete="off" />
+							 min="1970-01-01" onclick="validate(this);" onkeypress="return false" />
+				</tr>
+				<tr>
+					<td><springform:label path="adminAge">Age :</springform:label>
+					<td><springform:input path="adminAge" placeholder="Age"
+							 id="agecal" style="height : 30px;" 
+							 readonly="true" onclick="return agecalculator(this);"/>
 				</tr>
 				<tr>
 					<td><springform:label path="adminContactNo">Contact Number :</springform:label>
@@ -285,28 +283,12 @@ input[type=submit],[type=button] {
 					<td><springform:label path="adminPassword">Password :</springform:label>
 					<td><springform:input path="adminPassword" type="password"
 							placeholder="Password" id="password" style="height : 30px;"
-							maxlength="10" autocomplete="off" />
+							maxlength="10" autocomplete="off" minlength="8"/>
 				</tr>
 				
-				<tr>
-               <td>
-                  <input type="text" id="mainCaptcha" readonly="true" style="height : 30px;"/> 
-               <td>   <input type="button" id="refresh" value="Refresh" onclick=" return generateCaptcha(event);" />
-               
-            </tr>
-            <tr>
-               <td>
-                 Enter captcha:<td> <input type="text" id="txtInput" style="height : 30px;" autocomplete="off"/>    
-               
-            </tr>
-    <td><span id="error" style="color:red"></span></td>
-            </tr>
-            <tr>
-               <td><span id="success" style="color:green" delay="1000"></span></td>
-            </tr>
-            
-				<div class="register">
-					<input type="submit" value="register" onclick="return fn(event)">
+			 	
+				<div class="register1">
+					<input type="submit" value="register" onclick="return fn(event);"/>
 				</div>
 				</form>
 			</table>
